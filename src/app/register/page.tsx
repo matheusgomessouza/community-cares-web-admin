@@ -2,12 +2,12 @@ import Link from "next/link";
 
 export default function RegisterScreen() {
   return (
-    <main className="flex min-h-screen flex-col items-center p-24 justify-evenly xl:min-w-96 gap-64">
-      <span className="text-orange font-extrabold text-2xl">
+    <main className="flex min-h-screen flex-col items-center p-24 justify-evenly xl:min-w-96 gap-10">
+      <span className="text-orange font-extrabold text-2xl text-center">
         Sign up to Community Cares
       </span>
-      <form action="" className="flex flex-col gap-8">
-        <section className="flex gap-9 min-w-full">
+      <form action="" className="flex flex-col gap-8 justify-center">
+        <section className="flex flex-col xl:flex-row gap-9 min-w-full">
           <div className="flex flex-col">
             <label htmlFor="" className="text-orange mb-2">
               Name

@@ -22,3 +22,20 @@ const config: Config = {
   plugins: [],
 };
 export default config;
+
+// plugins: [
+//   plugin(function ({ addBase, theme }) {
+//     addBase({
+//       ':root': {
+//         '--primary': theme('colors.primary'),
+//         '--white': theme('colors.white'),
+//         '--gray-4': theme('colors.gray-4'),
+//         '--gray-6': theme('colors.gray-6'),
+//         '--gray-10': theme('colors.gray-10'),
+//         '--gray-12': theme('colors.gray-12'),
+//         '--gray-14': theme('colors.gray-14'),
+//       },
+//     })
+//   })
+// ],
+// const plugin = require('tailwindcss/plugin');
