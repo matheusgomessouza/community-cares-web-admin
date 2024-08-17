@@ -5,7 +5,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import * as interfaces from "@/types/interfaces";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-export default function FormComponent() {
+export default function SignInFormComponent() {
   const {
     register,
     handleSubmit,
