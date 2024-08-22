@@ -1,9 +1,12 @@
 "use client";
 
+import axios from "axios";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
-import * as interfaces from "@/types/interfaces";
 import { zodResolver } from "@hookform/resolvers/zod";
+
+import * as interfaces from "@/types/interfaces";
 
 export default function SignInFormComponent() {
   const {
@@ -14,21 +17,44 @@ export default function SignInFormComponent() {
     resolver: zodResolver(interfaces.SignInSchema),
   });
 
+  const router = useRouter();
+
+  async function handleAdminAuth(data: interfaces.SignInProps) {
+    try {
+      const response = await axios.post(
+        "https://community-cares-server.onrender.com/authenticate-admin",
+        {
+          username: data.username,
+          password: data.password,
+        },
+      );
+
+      if (response.status === 200) {
+        document.cookie  = `token=${response.data.token}; Secure`
+        router.push("/validate");
+      }
+    } catch (error) {
+      console.error("Unable to perform authentication, try again.", error);
+    }
+  }
+
   const onSubmit: SubmitHandler<interfaces.SignInProps> = (data) =>
-    console.log(data);
+    handleAdminAuth(data);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
-      <label htmlFor="" className="text-orange mb-2">
+      <label htmlFor="username" className="text-orange mb-2">
         Username
       </label>
       <input
         type="text"
+        title="Username form field"
+        placeholder=""
         {...register("username")}
         className={
           errors.username
-            ? "border-solid border-2 h-10 border-gray rounded-lg min-w-60 outline-red-500"
-            : "border-solid border-2 h-10 border-gray rounded-lg min-w-60 outline-orange"
+            ? "border-solid border-2 h-10 rounded-lg min-w-60 border-rose-500 px-1 focus-visible:outline-red-500"
+            : "border-solid border-2 h-10 border-gray rounded-lg min-w-60 outline-orange px-1"
         }
       />
       {errors.username && (
@@ -36,16 +62,18 @@ export default function SignInFormComponent() {
           {errors.username.message}
         </span>
       )}
-      <label htmlFor="" className="text-orange mt-4 mb-2">
+      <label htmlFor="password" className="text-orange mt-4 mb-2">
         Password
       </label>
       <input
-        type="text"
+        type="password"
+        title="Password form field"
+        placeholder=""
         {...register("password")}
         className={
           errors.password
-            ? "border-solid border-2 h-10 rounded-lg min-w-60 border-rose-500"
-            : "border-solid border-2 h-10 border-gray rounded-lg min-w-60 outline-orange"
+            ? "border-solid border-2 h-10 rounded-lg min-w-60 border-rose-500 px-1 focus-visible:outline-red-500"
+            : "border-solid border-2 h-10 border-gray rounded-lg min-w-60 outline-orange px-1"
         }
       />
       {errors.password && (

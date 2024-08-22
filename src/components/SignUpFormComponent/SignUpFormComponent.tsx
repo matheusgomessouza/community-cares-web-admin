@@ -80,7 +80,7 @@ export default function SignUpFormComponent() {
       </div>
 
       <div className="flex flex-col">
-        <label htmlFor="" className="text-orange mb-2">
+        <label htmlFor="password" className="text-orange mb-2">
           Password
         </label>
         <input
