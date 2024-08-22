@@ -22,18 +22,11 @@ export default function SignInFormComponent() {
   async function handleAdminAuth(data: interfaces.SignInProps) {
     try {
       const response = await axios.post(
-        "http://localhost:8080/authenticate-admin",
+        "https://community-cares-server.onrender.com/authenticate-admin",
         {
           username: data.username,
           password: data.password,
         },
-        {
-          proxy: {
-            protocol: "http",
-            host: "185.153.176.137",
-            port: 8080,
-          },
-        }
       );
 
       if (response.status === 200) {
