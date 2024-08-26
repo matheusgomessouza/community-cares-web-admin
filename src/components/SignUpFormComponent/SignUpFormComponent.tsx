@@ -2,8 +2,11 @@
 
 import axios from "axios";
 import Link from "next/link";
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import * as interfaces from "@/types/interfaces";
 
@@ -15,14 +18,30 @@ export default function SignUpFormComponent() {
   } = useForm<interfaces.SignUpProps>({
     resolver: zodResolver(interfaces.SignUpSchema),
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   async function postAdminUser(data: interfaces.SignUpProps) {
-    await axios.post("https://community-cares-server.onrender.com/admin-user", {
-      name: data.name,
-      username: data.username,
-      email: data.email,
-      password: data.password,
-    });
+    try {
+      setIsLoading(true);
+      const response = await axios.post(
+        "https://community-cares-server.onrender.com/admin-user",
+        {
+          name: data.name,
+          username: data.username,
+          email: data.email,
+          password: data.password,
+        }
+      );
+
+      if (response.status === 204)
+        toast.success("Admin user successfully created!");
+    } catch (error) {
+      setIsLoading(false);
+      console.error("Unable to create admin account, please try again.", error);
+      toast.error("Unable to create admin account, please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   const onSubmit: SubmitHandler<interfaces.SignUpProps> = (data) =>
@@ -43,10 +62,15 @@ export default function SignUpFormComponent() {
             {...register("name")}
             className={
               errors.name
-                ? "border-solid border-2 h-10 border-gray rounded-lg min-w-60 outline-red-500"
-                : "border-solid border-2 h-10 border-gray rounded-lg min-w-60 outline-orange"
+                ? "px-2 border-solid border-2 h-10 rounded-lg min-w-60 border-rose-500 outline-red-500"
+                : "px-2 border-solid border-2 h-10 border-gray rounded-lg min-w-60 outline-orange"
             }
           />
+          {errors.name && (
+            <span className="font-sans font-bold text-red-500">
+              {errors.name.message}
+            </span>
+          )}
         </div>
         <div className="flex flex-col">
           <label htmlFor="" className="text-orange mb-2">
@@ -57,10 +81,15 @@ export default function SignUpFormComponent() {
             {...register("username")}
             className={
               errors.username
-                ? "border-solid border-2 h-10 border-gray rounded-lg min-w-60 outline-red-500"
-                : "border-solid border-2 h-10 border-gray rounded-lg min-w-60 outline-orange"
+                ? "px-2 border-solid border-2 h-10 rounded-lg min-w-60 border-rose-500 outline-red-500"
+                : "px-2 border-solid border-2 h-10 border-gray rounded-lg min-w-60 outline-orange"
             }
           />
+          {errors.username && (
+            <span className="font-sans font-bold text-red-500">
+              {errors.username.message}
+            </span>
+          )}
         </div>
       </section>
 
@@ -73,10 +102,15 @@ export default function SignUpFormComponent() {
           {...register("email")}
           className={
             errors.email
-              ? "border-solid border-2 h-10 border-gray rounded-lg min-w-60 outline-red-500"
-              : "border-solid border-2 h-10 border-gray rounded-lg min-w-60 outline-orange"
+              ? "px-2 border-solid border-2 h-10 rounded-lg min-w-60 border-rose-500 outline-red-500"
+              : "px-2 border-solid border-2 h-10 border-gray rounded-lg min-w-60 outline-orange"
           }
         />
+        {errors.email && (
+          <span className="font-sans font-bold text-red-500">
+            {errors.email.message}
+          </span>
+        )}
       </div>
 
       <div className="flex flex-col">
@@ -84,14 +118,19 @@ export default function SignUpFormComponent() {
           Password
         </label>
         <input
-          type="text"
+          type="password"
           {...register("password")}
           className={
             errors.password
-              ? "border-solid border-2 h-10 border-gray rounded-lg min-w-60 outline-red-500"
-              : "border-solid border-2 h-10 border-gray rounded-lg min-w-60 outline-orange"
+              ? "px-2 border-solid border-2 h-10 rounded-lg min-w-60 border-rose-500 outline-red-500"
+              : "px-2 border-solid border-2 h-10 border-gray rounded-lg min-w-60 outline-orange"
           }
         />
+        {errors.password && (
+          <span className="font-sans font-bold text-red-500">
+            {errors.password.message}
+          </span>
+        )}
       </div>
 
       <div className="flex flex-col">
@@ -99,21 +138,46 @@ export default function SignUpFormComponent() {
           Confirm password
         </label>
         <input
-          type="text"
+          type="password"
           {...register("confirmPassword")}
           className={
             errors.confirmPassword
-              ? "border-solid border-2 h-10 border-gray rounded-lg min-w-60 outline-red-500"
-              : "border-solid border-2 h-10 border-gray rounded-lg min-w-60 outline-orange"
+              ? "px-2 border-solid border-2 h-10 rounded-lg min-w-60 border-rose-500 outline-red-500"
+              : "px-2 border-solid border-2 h-10 border-gray rounded-lg min-w-60 outline-orange"
           }
         />
+        {errors.confirmPassword && (
+          <span className="font-sans font-bold text-red-500">
+            {errors.confirmPassword.message}
+          </span>
+        )}
       </div>
 
       <button
         type="submit"
         className="bg-orange h-10 rounded-lg mt-8 max-w-60 min-w-60 mx-auto"
       >
-        <span className="font-bold font">Sign up</span>
+        {isLoading ? (
+          <section className="flex gap-2 items-center justify-center">
+            <p className="font-semibold text-white">Creating user</p>
+            <svg
+              width="100"
+              height="100"
+              className="animate-spin h-5 w-5 mr-3 border-white rounded-full border-4 border-dotted"
+            >
+              <circle
+                cx="50"
+                cy="50"
+                r="40"
+                stroke="green"
+                strokeWidth="4"
+                fill="yellow"
+              />
+            </svg>
+          </section>
+        ) : (
+          <span className="font-bold font">Sign up</span>
+        )}
       </button>
       <p className="text-gray mt-4 text-center">
         Already have an account?{" "}
@@ -121,6 +185,8 @@ export default function SignUpFormComponent() {
           <u className="text-orange">Sign in</u>
         </Link>
       </p>
+
+      <ToastContainer />
     </form>
   );
 }

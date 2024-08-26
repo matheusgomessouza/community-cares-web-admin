@@ -31,5 +31,5 @@ export const SignUpSchema: ZodType<SignUpProps> = z
   })
   .refine((data) => data.confirmPassword === data.password, {
     message: "Passwords don't match",
-    path: ["password", "confirmPassword"],
+    path: ["confirmPassword"],
   });
