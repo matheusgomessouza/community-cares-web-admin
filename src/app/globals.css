@@ -30,8 +30,15 @@ h1 {
   font-family: var(--font-heading);
 }
 
-p, label, span, u {
+p,
+label,
+span,
+u {
   font-family: var(--font-paragraph);
+}
+
+input {
+  color: #9f9b9b;
 }
 
 @layer utilities {
