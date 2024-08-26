@@ -7,6 +7,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import * as interfaces from "@/types/interfaces";
+import { useState } from "react";
 
 export default function SignInFormComponent() {
   const {
@@ -16,25 +17,30 @@ export default function SignInFormComponent() {
   } = useForm<interfaces.SignInProps>({
     resolver: zodResolver(interfaces.SignInSchema),
   });
+  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
 
   async function handleAdminAuth(data: interfaces.SignInProps) {
     try {
+      setIsLoading(true);
       const response = await axios.post(
         "https://community-cares-server.onrender.com/authenticate-admin",
         {
           username: data.username,
           password: data.password,
-        },
+        }
       );
 
       if (response.status === 200) {
-        document.cookie  = `token=${response.data.token}; Secure`
+        document.cookie = `token=${response.data.token}; Secure`;
         router.push("/validate");
       }
     } catch (error) {
+      setIsLoading(false);
       console.error("Unable to perform authentication, try again.", error);
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -53,8 +59,8 @@ export default function SignInFormComponent() {
         {...register("username")}
         className={
           errors.username
-            ? "border-solid border-2 h-10 rounded-lg min-w-60 border-rose-500 px-1 focus-visible:outline-red-500"
-            : "border-solid border-2 h-10 border-gray rounded-lg min-w-60 outline-orange px-1"
+            ? "px-2 border-solid border-2 h-10 rounded-lg min-w-60 border-rose-500 focus-visible:outline-red-500"
+            : "px-2 border-solid border-2 h-10 border-gray rounded-lg min-w-60 outline-orange"
         }
       />
       {errors.username && (
@@ -72,8 +78,8 @@ export default function SignInFormComponent() {
         {...register("password")}
         className={
           errors.password
-            ? "border-solid border-2 h-10 rounded-lg min-w-60 border-rose-500 px-1 focus-visible:outline-red-500"
-            : "border-solid border-2 h-10 border-gray rounded-lg min-w-60 outline-orange px-1"
+            ? "px-2 border-solid border-2 h-10 rounded-lg min-w-60 border-rose-500 focus-visible:outline-red-500"
+            : "px-2 border-solid border-2 h-10 border-gray rounded-lg min-w-60 outline-orange"
         }
       />
       {errors.password && (
@@ -85,7 +91,27 @@ export default function SignInFormComponent() {
         <u>Forgot password?</u>
       </Link>
       <button type="submit" className="bg-orange h-10 rounded-lg mt-8">
-        <span className="font-bold font">Sign in</span>
+        {isLoading ? (
+          <section className="flex gap-2 items-center justify-center">
+            <p className="font-semibold text-white">Authenticating</p>
+            <svg
+              width="100"
+              height="100"
+              className="animate-spin h-5 w-5 mr-3 border-white rounded-full border-4 border-dotted"
+            >
+              <circle
+                cx="50"
+                cy="50"
+                r="40"
+                stroke="green"
+                strokeWidth="4"
+                fill="yellow"
+              />
+            </svg>
+          </section>
+        ) : (
+          <span className="font-bold font">Sign in</span>
+        )}
       </button>
       <p className="text-gray mt-4">
         Don’t have an account?{" "}
