@@ -33,3 +33,15 @@ export const SignUpSchema: ZodType<SignUpProps> = z
     message: "Passwords don't match",
     path: ["confirmPassword"],
   });
+
+export interface PendingLocationsProps {
+  id: number;
+  name: string;
+  type: string;
+  address: string;
+  contact: string;
+  coords: {
+    latitude: string;
+    longitude: string;
+  };
+}
