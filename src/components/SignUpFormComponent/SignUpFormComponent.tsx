@@ -33,7 +33,7 @@ export default function SignUpFormComponent() {
         }
       );
 
-      if (response.status === 204)
+      if (response.status === 201)
         toast.success("Admin user successfully created!");
     } catch (error) {
       setIsLoading(false);
