@@ -38,6 +38,11 @@ export default function ValidateScreen() {
   async function postPendingLocationIntoLocations(
     pendingLocation: interfaces.PendingLocationsProps
   ) {
+    const cookieValue = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("token="))
+      ?.split("=")[1];
+
     try {
       const response = await axios.post(
         "https://community-cares-server.onrender.com/locations",
@@ -50,6 +55,11 @@ export default function ValidateScreen() {
           coords: {
             latitude: pendingLocation.coords.latitude,
             longitude: pendingLocation.coords.longitude,
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${cookieValue}`,
           },
         }
       );
@@ -67,9 +77,19 @@ export default function ValidateScreen() {
   }
 
   async function deletePendingLocation(id: number) {
+    const cookieValue = document.cookie
+      .split("; ")
+      .find((row) => row.startsWith("token="))
+      ?.split("=")[1];
+
     try {
       const response = await axios.delete(
-        `https://community-cares-server.onrender.com/pending-location/${id}`
+        `https://community-cares-server.onrender.com/pending-location/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${cookieValue}`,
+          },
+        }
       );
 
       if (response.status === 200) {
@@ -83,13 +103,6 @@ export default function ValidateScreen() {
   }
 
   useEffect(() => {
-    // Getting the JWT token to approve Locations
-    const cookieValue = document.cookie
-      .split("; ")
-      .find((row) => row.startsWith("token="))
-      ?.split("=")[1];
-    console.log(cookieValue);
-
     getPendingLocations();
   }, []);
 
