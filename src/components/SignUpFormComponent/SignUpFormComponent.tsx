@@ -24,7 +24,7 @@ export default function SignUpFormComponent() {
     try {
       setIsLoading(true);
       const response = await axios.post(
-        "https://community-cares-server.onrender.com/admin-user",
+        `${process.env.NEXT_PUBLIC_API}/admin-user`,
         {
           name: data.name,
           username: data.username,

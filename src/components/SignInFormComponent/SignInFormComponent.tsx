@@ -25,7 +25,7 @@ export default function SignInFormComponent() {
     try {
       setIsLoading(true);
       const response = await axios.post(
-        "https://community-cares-server.onrender.com/authenticate-admin",
+        `${process.env.NEXT_PUBLIC_API}/authenticate-admin`,
         {
           username: data.username,
           password: data.password,

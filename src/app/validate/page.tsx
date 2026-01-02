@@ -24,7 +24,7 @@ export default function ValidateScreen() {
   async function getPendingLocations() {
     try {
       const response = await axios.get(
-        "https://community-cares-server.onrender.com/pending-locations"
+        `${process.env.NEXT_PUBLIC_API}/pending-locations`
       );
 
       if (response.status === 200) setPendingLocations(response.data);
@@ -45,7 +45,7 @@ export default function ValidateScreen() {
 
     try {
       const response = await axios.post(
-        "https://community-cares-server.onrender.com/locations",
+        `${process.env.NEXT_PUBLIC_API}/locations`,
         {
           id: pendingLocation.id,
           name: pendingLocation.name,
@@ -84,7 +84,7 @@ export default function ValidateScreen() {
 
     try {
       const response = await axios.delete(
-        `https://community-cares-server.onrender.com/pending-location/${id}`,
+        `${process.env.NEXT_PUBLIC_API}/pending-location/${id}`,
         {
           headers: {
             Authorization: `Bearer ${cookieValue}`,
