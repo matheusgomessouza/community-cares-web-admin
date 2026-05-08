@@ -5,9 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 
 import * as interfaces from "@/types/interfaces";
-import { useState } from "react";
 
 export default function SignInFormComponent() {
   const {
@@ -17,35 +17,32 @@ export default function SignInFormComponent() {
   } = useForm<interfaces.SignInProps>({
     resolver: zodResolver(interfaces.SignInSchema),
   });
-  const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
 
-  async function handleAdminAuth(data: interfaces.SignInProps) {
-    try {
-      setIsLoading(true);
-      const response = await axios.post(
+  const signInMutation = useMutation({
+    mutationFn: async (data: interfaces.SignInProps) => {
+      return axios.post(
         `${process.env.NEXT_PUBLIC_API}/admin-users/authenticate`,
         {
           username: data.username,
           password: data.password,
         }
       );
-
+    },
+    onSuccess: (response) => {
       if (response.status === 200) {
         document.cookie = `token=${response.data.token}; Secure`;
         router.push("/validate");
       }
-    } catch (error) {
-      setIsLoading(false);
+    },
+    onError: (error) => {
       console.error("Unable to perform authentication, try again.", error);
-    } finally {
-      setIsLoading(false);
-    }
-  }
+    },
+  });
 
   const onSubmit: SubmitHandler<interfaces.SignInProps> = (data) =>
-    handleAdminAuth(data);
+    signInMutation.mutate(data);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
@@ -90,8 +87,8 @@ export default function SignInFormComponent() {
       <Link href="#" className="text-orange text-xs font-bold mt-2">
         <u>Forgot password?</u>
       </Link>
-      <button type="submit" className="bg-orange h-10 rounded-lg mt-8">
-        {isLoading ? (
+      <button type="submit" className="bg-orange h-10 rounded-lg mt-8 disabled:opacity-75" disabled={signInMutation.isPending}>
+        {signInMutation.isPending ? (
           <section className="flex gap-2 items-center justify-center">
             <p className="font-semibold text-white">Authenticating</p>
             <svg
