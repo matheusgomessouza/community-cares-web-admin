@@ -90,7 +90,7 @@ export default function ValidateScreen() {
     },
     onError: (error) => {
       console.error("Unable to perform request, please try again", error);
-      toast.error("Unable to deleted pending location, please try again.");
+      toast.error("Unable to delete pending location, please try again.");
     },
   });
 
