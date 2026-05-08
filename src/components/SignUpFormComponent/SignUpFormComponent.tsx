@@ -2,11 +2,11 @@
 
 import axios from "axios";
 import Link from "next/link";
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useMutation } from "@tanstack/react-query";
 
 import * as interfaces from "@/types/interfaces";
 
@@ -18,12 +18,10 @@ export default function SignUpFormComponent() {
   } = useForm<interfaces.SignUpProps>({
     resolver: zodResolver(interfaces.SignUpSchema),
   });
-  const [isLoading, setIsLoading] = useState(false);
 
-  async function postAdminUser(data: interfaces.SignUpProps) {
-    try {
-      setIsLoading(true);
-      const response = await axios.post(
+  const signUpMutation = useMutation({
+    mutationFn: async (data: interfaces.SignUpProps) => {
+      return axios.post(
         `${process.env.NEXT_PUBLIC_API}/admin-users`,
         {
           name: data.name,
@@ -32,20 +30,19 @@ export default function SignUpFormComponent() {
           password: data.password,
         }
       );
-
+    },
+    onSuccess: (response) => {
       if (response.status === 201)
         toast.success("Admin user successfully created!");
-    } catch (error) {
-      setIsLoading(false);
+    },
+    onError: (error) => {
       console.error("Unable to create admin account, please try again.", error);
       toast.error("Unable to create admin account, please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  }
+    },
+  });
 
   const onSubmit: SubmitHandler<interfaces.SignUpProps> = (data) =>
-    postAdminUser(data);
+    signUpMutation.mutate(data);
 
   return (
     <form
@@ -155,9 +152,10 @@ export default function SignUpFormComponent() {
 
       <button
         type="submit"
-        className="bg-orange h-10 rounded-lg mt-8 max-w-60 min-w-60 mx-auto"
+        className="bg-orange h-10 rounded-lg mt-8 max-w-60 min-w-60 mx-auto disabled:opacity-75"
+        disabled={signUpMutation.isPending}
       >
-        {isLoading ? (
+        {signUpMutation.isPending ? (
           <section className="flex gap-2 items-center justify-center">
             <p className="font-semibold text-white">Creating user</p>
             <svg
