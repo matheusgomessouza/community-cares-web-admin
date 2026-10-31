@@ -44,4 +44,5 @@ export interface PendingLocationsProps {
     latitude: string;
     longitude: string;
   };
+  image_url?: string | null;
 }
