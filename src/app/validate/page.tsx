@@ -50,6 +50,7 @@ export default function ValidateScreen() {
             latitude: pendingLocation.coords.latitude,
             longitude: pendingLocation.coords.longitude,
           },
+          image_url: pendingLocation.image_url,
         },
         {
           headers: {
