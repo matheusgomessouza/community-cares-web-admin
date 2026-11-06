@@ -84,7 +84,7 @@ export default function SignInFormComponent() {
           {errors.password.message}
         </span>
       )}
-      <Link href="#" className="text-orange text-xs font-bold mt-2">
+      <Link href="/forgot-password" className="text-orange text-xs font-bold mt-2">
         <u>Forgot password?</u>
       </Link>
       <button type="submit" className="bg-orange h-10 rounded-lg mt-8 disabled:opacity-75" disabled={signInMutation.isPending}>
